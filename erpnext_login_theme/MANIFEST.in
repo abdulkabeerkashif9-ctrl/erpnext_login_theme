@@ -1,0 +1,2 @@
+include *.py
+recursive-include erpnext_login_theme *.py *.html *.css *.js *.json *.txt
