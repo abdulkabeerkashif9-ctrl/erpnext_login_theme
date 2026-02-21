@@ -3,6 +3,7 @@ README.md
 hooks.py
 setup.py
 erpnext_login_theme/__init__.py
+erpnext_login_theme/hooks.py
 erpnext_login_theme/modules.txt
 erpnext_login_theme/patches.txt
 erpnext_login_theme.egg-info/PKG-INFO
@@ -11,6 +12,7 @@ erpnext_login_theme.egg-info/dependency_links.txt
 erpnext_login_theme.egg-info/not-zip-safe
 erpnext_login_theme.egg-info/top_level.txt
 erpnext_login_theme/config/__init__.py
+erpnext_login_theme/erpnext_login_theme/__init__.py
 erpnext_login_theme/overrides/__init__.py
 erpnext_login_theme/overrides/login_page.py
 erpnext_login_theme/www/login.html
