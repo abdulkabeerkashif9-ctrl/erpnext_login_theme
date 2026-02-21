@@ -11,3 +11,4 @@ app_version = "1.0.0"
 website_route_rules = [
     {"from_route": "/login", "to_route": "login"},
 ]
+app_include_css = "/assets/erpnext_login_theme/css/desk.css"
