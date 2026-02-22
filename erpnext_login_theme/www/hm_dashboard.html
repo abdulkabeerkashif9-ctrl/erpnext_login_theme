@@ -1,0 +1,277 @@
+---
+title: HM Technologies Dashboard
+no_cache: 1
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>HM Technologies — Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:#f0f4f8;color:#0f172a;min-height:100vh}
+
+.topbar{background:#0f1e2d;height:52px;display:flex;align-items:center;padding:0 28px;gap:20px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,0.3)}
+.topbar-brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+.topbar-icon{width:32px;height:32px;background:linear-gradient(135deg,#2a9d8f,#1f7a6d);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.topbar-icon svg{width:17px;height:17px;fill:none;stroke:#fff;stroke-width:2.2}
+.topbar-name{font-size:14px;font-weight:700;color:#fff;letter-spacing:-0.02em}
+.topbar-sep{width:1px;height:20px;background:rgba(255,255,255,0.1);margin:0 8px}
+.topbar-title{font-size:12px;color:#64748b;font-weight:500}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:12px}
+.topbar-link{font-size:12px;color:#94a3b8;text-decoration:none;padding:4px 10px;border-radius:5px;transition:all .15s}
+.topbar-link:hover{color:#fff;background:rgba(255,255,255,0.07)}
+.topbar-avatar{width:30px;height:30px;background:linear-gradient(135deg,#2a9d8f,#1f7a6d);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff}
+
+.main{padding:28px 32px}
+
+.page-header{margin-bottom:24px}
+.page-header h1{font-size:22px;font-weight:800;color:#0f172a;letter-spacing:-0.03em}
+.page-header p{font-size:13px;color:#64748b;margin-top:4px}
+
+/* KPI Cards */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.kpi-card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:20px;position:relative;overflow:hidden;transition:box-shadow .2s,transform .2s}
+.kpi-card:hover{box-shadow:0 6px 20px rgba(0,0,0,0.08);transform:translateY(-1px)}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent,#2a9d8f)}
+.kpi-card.red::before{background:#ef4444}
+.kpi-card.blue::before{background:#3b82f6}
+.kpi-card.amber::before{background:#f59e0b}
+.kpi-label{font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px}
+.kpi-value{font-size:28px;font-weight:800;color:#0f172a;letter-spacing:-0.03em;margin-bottom:4px}
+.kpi-sub{font-size:11px;color:#94a3b8}
+.kpi-icon{position:absolute;top:16px;right:16px;width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:var(--icon-bg,#e6f7f5)}
+.kpi-icon svg{width:18px;height:18px;stroke:var(--accent,#2a9d8f);fill:none;stroke-width:2}
+.kpi-card.red .kpi-icon{background:#fef2f2;--accent:#ef4444}
+.kpi-card.blue .kpi-icon{background:#eff6ff;--accent:#3b82f6}
+.kpi-card.amber .kpi-icon{background:#fffbeb;--accent:#f59e0b}
+
+/* Charts grid */
+.charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+.chart-card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:20px}
+.chart-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.chart-card-title{font-size:13px;font-weight:700;color:#0f172a}
+.chart-card-sub{font-size:11px;color:#94a3b8;margin-top:2px}
+.chart-wrap{position:relative;height:220px}
+
+/* Leaderboard */
+.leaderboard-card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:20px}
+.lb-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #f1f5f9}
+.lb-row:last-child{border-bottom:none}
+.lb-rank{width:24px;height:24px;border-radius:50%;background:#e6f7f5;color:#2a9d8f;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.lb-rank.gold{background:#fef9c3;color:#a16207}
+.lb-rank.silver{background:#f1f5f9;color:#475569}
+.lb-rank.bronze{background:#ffedd5;color:#c2410c}
+.lb-name{flex:1;font-size:12.5px;font-weight:500;color:#1e293b}
+.lb-amount{font-size:12.5px;font-weight:700;color:#0f172a}
+.lb-bar-wrap{width:80px;height:5px;background:#f1f5f9;border-radius:3px;overflow:hidden}
+.lb-bar{height:100%;background:linear-gradient(90deg,#2a9d8f,#52c4b8);border-radius:3px;transition:width .8s ease}
+
+.loading{display:flex;align-items:center;justify-content:center;height:100%;color:#94a3b8;font-size:12px;gap:8px}
+.spinner{width:16px;height:16px;border:2px solid #e2e8f0;border-top-color:#2a9d8f;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.back-btn{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid #e2e8f0;border-radius:7px;padding:6px 14px;font-size:12px;font-weight:500;color:#334155;text-decoration:none;transition:all .15s;margin-bottom:20px}
+.back-btn:hover{border-color:#2a9d8f;color:#2a9d8f}
+.back-btn svg{width:14px;height:14px;stroke:currentColor;fill:none}
+
+@media(max-width:1024px){.kpi-grid{grid-template-columns:repeat(2,1fr)}.charts-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <a class="topbar-brand" href="/app">
+    <div class="topbar-icon"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h10M4 18h7"/><rect x="14" y="13" width="7" height="7" rx="1.5"/></svg></div>
+    <span class="topbar-name">HM Technologies</span>
+  </a>
+  <div class="topbar-sep"></div>
+  <span class="topbar-title">Business Dashboard</span>
+  <div class="topbar-right">
+    <a href="/app" class="topbar-link">← Back to ERP</a>
+    <div class="topbar-avatar">A</div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="page-header">
+    <h1>Business Overview</h1>
+    <p id="date-label">Loading...</p>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi-card" id="kpi-revenue">
+      <div class="kpi-label">Revenue This Month</div>
+      <div class="kpi-value" id="val-revenue"><div class="spinner"></div></div>
+      <div class="kpi-sub" id="sub-revenue">&nbsp;</div>
+      <div class="kpi-icon"><svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+    </div>
+    <div class="kpi-card red" id="kpi-expenses">
+      <div class="kpi-label">Expenses Today</div>
+      <div class="kpi-value" id="val-expenses"><div class="spinner"></div></div>
+      <div class="kpi-sub" id="sub-expenses">&nbsp;</div>
+      <div class="kpi-icon"><svg viewBox="0 0 24 24"><path d="M16 3h5v5M21 3l-7 7M8 21H3v-5M3 21l7-7"/></svg></div>
+    </div>
+    <div class="kpi-card blue" id="kpi-invoices">
+      <div class="kpi-label">Pending Invoices</div>
+      <div class="kpi-value" id="val-invoices"><div class="spinner"></div></div>
+      <div class="kpi-sub" id="sub-invoices">&nbsp;</div>
+      <div class="kpi-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+    </div>
+    <div class="kpi-card amber" id="kpi-customers">
+      <div class="kpi-label">Active Customers</div>
+      <div class="kpi-value" id="val-customers"><div class="spinner"></div></div>
+      <div class="kpi-sub" id="sub-customers">&nbsp;</div>
+      <div class="kpi-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+    </div>
+  </div>
+
+  <div class="charts-grid">
+    <div class="chart-card">
+      <div class="chart-card-header">
+        <div><div class="chart-card-title">Top Customers</div><div class="chart-card-sub">By total billing this month</div></div>
+      </div>
+      <div class="chart-wrap"><canvas id="chart-customers"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-header">
+        <div><div class="chart-card-title">Top Suppliers</div><div class="chart-card-sub">By purchase amount this month</div></div>
+      </div>
+      <div class="chart-wrap"><canvas id="chart-suppliers"></canvas></div>
+    </div>
+  </div>
+
+  <div class="leaderboard-card">
+    <div class="chart-card-header" style="margin-bottom:12px">
+      <div><div class="chart-card-title">Top Salespersons</div><div class="chart-card-sub">Ranked by sales this month</div></div>
+    </div>
+    <div id="leaderboard-rows"><div class="loading"><div class="spinner"></div> Loading...</div></div>
+  </div>
+</div>
+
+<script>
+const fmt = n => 'PKR ' + Number(n||0).toLocaleString('en-PK', {maximumFractionDigits:0});
+const today = new Date();
+document.getElementById('date-label').textContent = today.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+async function api(method, filters={}, fields=[], limit=10) {
+  try {
+    const params = new URLSearchParams({
+      doctype: method,
+      fields: JSON.stringify(fields),
+      filters: JSON.stringify(filters),
+      limit_page_length: limit,
+      order_by: fields[1] ? fields[1] + ' desc' : undefined
+    });
+    const r = await fetch('/api/resource/' + method + '?' + params);
+    const d = await r.json();
+    return d.data || [];
+  } catch(e) { return []; }
+}
+
+async function frappe_call(method, args={}) {
+  try {
+    const r = await fetch('/api/method/' + method, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json','X-Frappe-CSRF-Token': frappe?.csrf_token || 'fetch'},
+      body: JSON.stringify(args)
+    });
+    const d = await r.json();
+    return d.message || d;
+  } catch(e) { return null; }
+}
+
+function makeChart(id, labels, data, color, label) {
+  const ctx = document.getElementById(id).getContext('2d');
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        label,
+        data,
+        backgroundColor: color + '33',
+        borderColor: color,
+        borderWidth: 2,
+        borderRadius: 6,
+        borderSkipped: false,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: ctx => fmt(ctx.raw) } }
+      },
+      scales: {
+        x: { grid: { display: false }, ticks: { font: { size: 11, family: 'Inter' }, color: '#94a3b8' } },
+        y: { grid: { color: '#f1f5f9' }, ticks: { font: { size: 11, family: 'Inter' }, color: '#94a3b8', callback: v => 'PKR ' + (v>=1000 ? (v/1000).toFixed(0)+'k' : v) } }
+      }
+    }
+  });
+}
+
+async function loadDashboard() {
+  const monthStart = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().split('T')[0];
+  const todayStr = today.toISOString().split('T')[0];
+
+  // Revenue this month
+  const revenueRes = await fetch('/api/method/frappe.client.get_list?doctype=Sales Invoice&filters=[["posting_date",">=","'+monthStart+'"],["docstatus","=","1"]]&fields=["sum(grand_total) as total"]&limit=1');
+  const revenueData = await revenueRes.json();
+  const revenue = revenueData?.data?.[0]?.total || 0;
+  document.getElementById('val-revenue').textContent = fmt(revenue);
+  document.getElementById('sub-revenue').textContent = 'Since ' + new Date(monthStart).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+
+  // Expenses today
+  const expRes = await fetch('/api/method/frappe.client.get_list?doctype=Payment Entry&filters=[["posting_date","=","'+todayStr+'"],["payment_type","=","Pay"],["docstatus","=","1"]]&fields=["sum(paid_amount) as total"]&limit=1');
+  const expData = await expRes.json();
+  const expenses = expData?.data?.[0]?.total || 0;
+  document.getElementById('val-expenses').textContent = fmt(expenses);
+  document.getElementById('sub-expenses').textContent = 'Payments made today';
+
+  // Pending invoices
+  const invRes = await fetch('/api/method/frappe.client.get_list?doctype=Sales Invoice&filters=[["outstanding_amount",">","0"],["docstatus","=","1"]]&fields=["count(name) as cnt","sum(outstanding_amount) as total"]&limit=1');
+  const invData = await invRes.json();
+  const invCount = invData?.data?.[0]?.cnt || 0;
+  const invTotal = invData?.data?.[0]?.total || 0;
+  document.getElementById('val-invoices').textContent = invCount;
+  document.getElementById('sub-invoices').textContent = fmt(invTotal) + ' outstanding';
+
+  // Active customers
+  const custRes = await fetch('/api/method/frappe.client.get_list?doctype=Customer&filters=[["disabled","=","0"]]&fields=["count(name) as cnt"]&limit=1');
+  const custData = await custRes.json();
+  document.getElementById('val-customers').textContent = custData?.data?.[0]?.cnt || 0;
+  document.getElementById('sub-customers').textContent = 'Total active customers';
+
+  // Top customers chart
+  const topCustRes = await fetch('/api/method/frappe.client.get_list?doctype=Sales Invoice&filters=[["posting_date",">=","'+monthStart+'"],["docstatus","=","1"]]&fields=["customer","sum(grand_total) as total"]&group_by=customer&order_by=total desc&limit=6');
+  const topCust = (await topCustRes.json())?.data || [];
+  makeChart('chart-customers', topCust.map(r=>r.customer?.substring(0,15)), topCust.map(r=>r.total), '#2a9d8f', 'Revenue');
+
+  // Top suppliers chart
+  const topSuppRes = await fetch('/api/method/frappe.client.get_list?doctype=Purchase Invoice&filters=[["posting_date",">=","'+monthStart+'"],["docstatus","=","1"]]&fields=["supplier","sum(grand_total) as total"]&group_by=supplier&order_by=total desc&limit=6');
+  const topSupp = (await topSuppRes.json())?.data || [];
+  makeChart('chart-suppliers', topSupp.map(r=>r.supplier?.substring(0,15)), topSupp.map(r=>r.total), '#3b82f6', 'Purchases');
+
+  // Leaderboard
+  const salesRes = await fetch('/api/method/frappe.client.get_list?doctype=Sales Invoice&filters=[["posting_date",">=","'+monthStart+'"],["docstatus","=","1"]]&fields=["sales_partner","sum(grand_total) as total"]&group_by=sales_partner&order_by=total desc&limit=8');
+  const salesData = (await salesRes.json())?.data?.filter(r=>r.sales_partner) || [];
+  const maxSales = salesData[0]?.total || 1;
+  const rankColors = ['gold','silver','bronze'];
+  const lbHtml = salesData.length ? salesData.map((r,i)=>`
+    <div class="lb-row">
+      <div class="lb-rank ${rankColors[i]||''}">${i+1}</div>
+      <div class="lb-name">${r.sales_partner}</div>
+      <div class="lb-bar-wrap"><div class="lb-bar" style="width:${Math.round(r.total/maxSales*100)}%"></div></div>
+      <div class="lb-amount">${fmt(r.total)}</div>
+    </div>`) .join('') : '<div class="loading">No sales data found for this month</div>';
+  document.getElementById('leaderboard-rows').innerHTML = lbHtml;
+}
+
+loadDashboard();
+</script>
+</body>
+</html>

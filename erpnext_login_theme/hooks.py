@@ -8,5 +8,10 @@ app_email = ""
 app_license = "MIT"
 app_version = "1.0.0"
 
-website_route_rules = [{"from_route": "/login", "to_route": "login"}]
+website_route_rules = [
+    {"from_route": "/login", "to_route": "login"},
+    {"from_route": "/hm-dashboard", "to_route": "hm_dashboard"},
+]
+
 app_include_css = "/assets/frappe/css/hm_theme.css"
+app_include_js = "/assets/erpnext_login_theme/js/hm_inject.js"
