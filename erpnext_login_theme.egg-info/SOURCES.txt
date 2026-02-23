@@ -15,4 +15,6 @@ erpnext_login_theme/config/__init__.py
 erpnext_login_theme/erpnext_login_theme/__init__.py
 erpnext_login_theme/overrides/__init__.py
 erpnext_login_theme/overrides/login_page.py
+erpnext_login_theme/public/css/hm_theme.css
+erpnext_login_theme/www/hm_dashboard.html
 erpnext_login_theme/www/login.html

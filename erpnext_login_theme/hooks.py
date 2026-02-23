@@ -14,4 +14,3 @@ website_route_rules = [
 ]
 
 app_include_css = "/assets/frappe/css/hm_theme.css"
-app_include_js = "/assets/erpnext_login_theme/js/hm_inject.js"
